@@ -48,16 +48,14 @@ const PortfolioPage = () => {
       <main className="flex-1 overflow-y-auto snap-y snap-mandatory">
         {/* First snap section */}
         <section className="flex flex-col lg:flex-row lg:items-center items-stretch justify-center min-h-screen lg:h-[92vh] snap-start px-4 lg:px-16 lg:px-32 xl:px-96 py-8 lg:py-0 gap-6">
-          <Card className="w-full aspect-square px-4 lg:px-6 flex items-center justify-center mb-0 mx-auto">
-            <div className="w-full h-full overflow-hidden rounded-lg">
-              <img
-                src="./Foto.jpg"
-                alt="Image of Wesley"
-                draggable="false"
-                onContextMenu={(e) => e.preventDefault()}
-                className="w-full h-full object-cover rounded-lg noselect"
-              />
-            </div>
+          <Card className="w-full lg:h-[66vh] aspect-square px-4 lg:px-6 flex items-center justify-center mb-0 mx-auto overflow-hidden">
+            <img
+              src="./Foto.jpg"
+              alt="Image of Wesley"
+              draggable="false"
+              onContextMenu={(e) => e.preventDefault()}
+              className="w-full h-full object-cover rounded-lg noselect"
+            />
           </Card>
           <Card className="w-full lg:w-auto h-auto lg:h-[66vh] max-h-[92vh] p-4 lg:p-6">
             <CardHeader>
