@@ -7,10 +7,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ToolTip from "@/components/tooltip_wrapper";
-import { Type } from "lucide-react";
 const PortfolioPage = () => {
+  const [showVZ, setShowVZ] = useState(false);
+  const [canLoadOnPC, setCanLoadOnPC] = useState(true);
+
+  useEffect(() => {
+    // Simple check for mobile/tablet devices
+    const userAgent = typeof window !== "undefined" ? navigator.userAgent : "";
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        userAgent
+      );
+    setCanLoadOnPC(!isMobile);
+  }, []);
+
   const techIcons = {
     Blender: { title: "Blender", icon: "/icons/Blender.svg" },
     "C#": { title: "C#", icon: "/icons/C-sharp.svg" },
@@ -29,26 +42,26 @@ const PortfolioPage = () => {
   };
 
   return (
-    <div className="min-w-[750px] h-screen flex flex-col">
+    <div className="min-w-full lg:min-w-[750px] h-screen flex flex-col sm:px-6">
       <title>LCN | Portfolio</title>
-      <NavBar className="flex justify-between items-center p-4 bg-[var(--secondary)]" />
-      <main className="flex-1 overflow-y-scroll snap-y snap-mandatory">
+      <NavBar className="flex justify-between items-center p-2 lg:p-4 bg-[var(--secondary)]" />
+      <main className="flex-1 overflow-y-auto snap-y snap-mandatory">
         {/* First snap section */}
-        <section className="flex items-center justify-between h-screen gap-96 snap-start px-96">
-          <Card className="h-[66vh] max-h-[92vh] p-6 flex items-center aspect-square justify-center">
-            <div className="aspect-square overflow-hidden">
+        <section className="flex flex-col lg:flex-row lg:items-center items-stretch justify-center min-h-screen lg:h-[92vh] snap-start px-4 lg:px-16 lg:px-32 xl:px-96 py-8 lg:py-0 gap-6">
+          <Card className="w-full aspect-square px-4 lg:px-6 flex items-center justify-center mb-0 mx-auto">
+            <div className="w-full h-full overflow-hidden rounded-lg">
               <img
                 src="./Foto.jpg"
                 alt="Image of Wesley"
                 draggable="false"
                 onContextMenu={(e) => e.preventDefault()}
-                className="object-cover w-full h-full rounded-lg noselect"
+                className="w-full h-full object-cover rounded-lg noselect"
               />
             </div>
           </Card>
-          <Card className="h-[66vh] max-h-[92vh] p-6">
+          <Card className="w-full lg:w-auto h-auto lg:h-[66vh] max-h-[92vh] p-4 lg:p-6">
             <CardHeader>
-              <CardTitle className="text-3xl font-bold mb-4">
+              <CardTitle className="text-2xl lg:text-3xl font-bold mb-4">
                 About me
               </CardTitle>
             </CardHeader>
@@ -88,11 +101,11 @@ const PortfolioPage = () => {
         </section>
 
         {/* Second snap section */}
-        <section className="flex items-center justify-center h-[94vh] snap-start px-96 gap-8">
+        <section className="flex flex-col lg:flex-row lg:items-center items-stretch justify-start lg:justify-center min-h-screen lg:h-[92vh] snap-start px-4 lg:px-16 lg:px-32 xl:px-96 py-8 lg:py-0 gap-6">
           {/* Project 404 Card */}
-          <Card className="w-1/2 flex flex-col min-h-[66vh] max-h-[92vh]">
+          <Card className="w-full lg:w-full flex flex-col min-h-[40vh] lg:min-h-[66vh] max-h-[92vh] mb-6 lg:mb-0">
             <CardHeader>
-              <CardTitle className="text-3xl font-bold mb-4">
+              <CardTitle className="text-2xl lg:text-3xl font-bold mb-4">
                 Project 404
               </CardTitle>
             </CardHeader>
@@ -130,17 +143,30 @@ const PortfolioPage = () => {
           </Card>
 
           {/* Iframe + Used Card Column */}
-          <div className="flex flex-col w-1/3 h-[66vh] max-h-[92vh] gap-4">
-            <Card className="aspect-4/3 overflow-hidden flex-1 flex flex-col">
+          <div className="flex flex-col aspect-video lg:aspect-4/3 h-auto lg:h-[66vh] max-h-[92vh] gap-4">
+            <Card className="aspect-video lg:aspect-4/3 overflow-hidden flex-1 flex flex-col">
               <CardContent className="w-full h-full flex items-center justify-center overflow-hidden">
-                <iframe
-                  id="VZ-iframe"
-                  src="https://lostcausenetwork.com/portfolio/vodafoneziggo/"
-                  title="Unity WebGL Project"
-                  className="w-full h-full overflow-hidden"
-                  loading="lazy"
-                  onLoad={() => console.log("Unity WebGL project loaded")}
-                />
+                {!canLoadOnPC ? (
+                  <div className="flex justify-center items-center text-lg font-semibold text-red-500 h-full w-full">
+                    Sneakpeak can only be viewed on Desktop
+                  </div>
+                ) : !showVZ ? (
+                  <button
+                    className="w-full h-full flex items-center justify-center text-lg font-semibold cursor-pointer"
+                    onClick={() => setShowVZ(true)}
+                  >
+                    Click to load Unity WebGL Project
+                  </button>
+                ) : (
+                  <iframe
+                    id="VZ-iframe"
+                    src="https://lostcausenetwork.com/portfolio/vodafoneziggo/"
+                    title="Unity WebGL Project"
+                    className="w-full h-full overflow-hidden"
+                    loading="lazy"
+                    onLoad={() => console.log("Unity WebGL project loaded")}
+                  />
+                )}
               </CardContent>
               <CardFooter className="gap-4">
                 <ToolTip
@@ -173,44 +199,29 @@ const PortfolioPage = () => {
               </CardFooter>
             </Card>
             <Card>
-              <CardContent className="flex flex-row gap-4 dark:invert">
-                <ToolTip
-                  Display={
-                    <img
-                      src={techIcons.Unity.icon}
-                      alt="Unity"
-                      className="w-12 h-12 object-contain"
+              <CardContent className="flex flex-row gap-2 lg:gap-4 dark:invert">
+                {[techIcons.Unity, techIcons.Blender, techIcons["C#"]].map(
+                  (tech) => (
+                    <ToolTip
+                      key={tech.title}
+                      Display={
+                        <img
+                          src={tech.icon}
+                          alt={tech.title}
+                          className="w-8 h-8 lg:w-12 lg:h-12 object-contain"
+                        />
+                      }
+                      children={<p>{tech.title}</p>}
                     />
-                  }
-                  children={<p>{techIcons.Unity.title}</p>}
-                />
-                <ToolTip
-                  Display={
-                    <img
-                      src={techIcons.Blender.icon}
-                      alt="Blender"
-                      className="w-12 h-12 object-contain"
-                    />
-                  }
-                  children={<p>{techIcons.Blender.title}</p>}
-                />
-                <ToolTip
-                  Display={
-                    <img
-                      src={techIcons["C#"].icon}
-                      alt="Blender"
-                      className="w-12 h-12 object-contain"
-                    />
-                  }
-                  children={<p>{techIcons["C#"].title}</p>}
-                />
+                  )
+                )}
                 <div className="flex-1" />
                 <ToolTip
                   Display={
                     <img
                       src={techIcons.Github.icon}
                       alt="Github"
-                      className="w-12 h-12 object-contain btn flex-end"
+                      className="w-8 h-8 lg:w-12 lg:h-12 object-contain btn flex-end"
                       onClick={() => {
                         window.open(
                           "https://github.com/xmaniaxz/Project404",
@@ -227,17 +238,17 @@ const PortfolioPage = () => {
         </section>
 
         {/* third snap section */}
-        <section className="flex items-center justify-center h-[94vh] snap-start px-96 gap-8">
+        <section className="flex flex-col lg:flex-row lg:items-center items-stretch justify-start lg:justify-center min-h-screen lg:h-[92vh] snap-start px-4 lg:px-16 lg:px-32 xl:px-96 py-8 lg:py-0 gap-6">
           {/* VoyagersGuild Card */}
           {/* Iframe + Used Card Column */}
-          <div className="flex flex-col w-1/3 h-[66vh] max-h-[92vh] gap-4">
-            <Card className="aspect-4/3 overflow-hidden flex-1 flex flex-col">
-              <CardContent className="w-full h-full flex items-center justify-center overflow-hidden">
+          <div className="flex flex-col w-full lg:w-full h-auto lg:h-[66vh] max-h-[92vh] gap-6 mb-6 lg:mb-0">
+            <Card className="w-full aspect-[3/4] overflow-hidden flex-1 flex flex-col">
+              <CardContent className="w-full full flex items-center justify-center overflow-hidden">
                 <iframe
                   id="voyagersguild-iframe"
                   src="https://voyagersguild.net"
                   title="VoyagersGuild Website"
-                  className="w-full h-full overflow-hidden"
+                  className="aspect-[3/4] w-full overflow-hidden"
                   loading="lazy"
                   onLoad={() => console.log("Website loaded")}
                 />
@@ -271,84 +282,35 @@ const PortfolioPage = () => {
               </CardFooter>
             </Card>
             <Card>
-              <CardContent className="flex flex-row gap-4 dark:invert">
-                <ToolTip
-                  Display={
-                    <img
-                      src={techIcons.HTML.icon}
-                      alt="HTML5"
-                      className="w-12 h-12 object-contain"
-                    />
-                  }
-                  children={<p>{techIcons.HTML.title}</p>}
-                />
-                <ToolTip
-                  Display={
-                    <img
-                      src={techIcons.React.icon}
-                      alt="React"
-                      className="w-12 h-12 object-contain"
-                    />
-                  }
-                  children={<p>{techIcons.React.title}</p>}
-                />
-                <ToolTip
-                  Display={
-                    <img
-                      src={techIcons.NextJs.icon}
-                      alt="NextJs"
-                      className="w-12 h-12 object-contain"
-                    />
-                  }
-                  children={<p>{techIcons.NextJs.title}</p>}
-                />
-                <ToolTip
-                  Display={
-                    <img
-                      src={techIcons.CSS3.icon}
-                      alt="CSS3"
-                      className="w-12 h-12 object-contain"
-                    />
-                  }
-                  children={<p>{techIcons.CSS3.title}</p>}
-                />
-                <ToolTip
-                  Display={
-                    <img
-                      src={techIcons.Tailwind.icon}
-                      alt="Tailwind"
-                      className="w-12 h-12 object-contain"
-                    />
-                  }
-                  children={<p>{techIcons.Tailwind.title}</p>}
-                />
-                <ToolTip
-                  Display={
-                    <img
-                      src={techIcons.TypeScript.icon}
-                      alt="TypeScript"
-                      className="w-12 h-12 object-contain"
-                    />
-                  }
-                  children={<p>{techIcons.TypeScript.title}</p>}
-                />
-                 <ToolTip
-                  Display={
-                    <img
-                      src={techIcons.JavaScript.icon}
-                      alt="JavaScript"
-                      className="w-12 h-12 object-contain"
-                    />
-                  }
-                  children={<p>{techIcons.JavaScript.title}</p>}
-                />
+              <CardContent className="flex flex-row gap-2 lg:gap-4 dark:invert">
+                {[
+                  techIcons.HTML,
+                  techIcons.React,
+                  techIcons.NextJs,
+                  techIcons.CSS3,
+                  techIcons.Tailwind,
+                  techIcons.TypeScript,
+                  techIcons.JavaScript,
+                ].map((tech) => (
+                  <ToolTip
+                    key={tech.title}
+                    Display={
+                      <img
+                        src={tech.icon}
+                        alt={tech.title}
+                        className="w-8 h-8 lg:w-12 lg:h-12 object-contain"
+                      />
+                    }
+                    children={<p>{tech.title}</p>}
+                  />
+                ))}
                 <div className="flex-1" />
                 <ToolTip
                   Display={
                     <img
                       src={techIcons.Github.icon}
                       alt="Github"
-                      className="w-12 h-12 object-contain btn flex-end"
+                      className="w-8 h-8 lg:w-12 lg:h-12 object-contain btn flex-end"
                       onClick={() => {
                         window.open(
                           "https://github.com/xmaniaxz/voyagers-guild",
@@ -358,40 +320,53 @@ const PortfolioPage = () => {
                     />
                   }
                   children={<p>{techIcons.Github.title}</p>}
-                />             
+                />
               </CardContent>
             </Card>
           </div>
-          <Card className="w-1/2 flex flex-col min-h-[66vh] max-h-[92vh]">
+          <Card className="w-full lg:w-1/2 flex flex-col min-h-[40vh] lg:min-h-[66vh] max-h-[92vh]">
             <CardHeader>
-              <CardTitle className="text-3xl font-bold mb-4">
+              <CardTitle className="text-2xl lg:text-3xl font-bold mb-4">
                 VoyagersGuild
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p>
-              The VoyagersGuild is a modded Minecraft community that is expanding to become a general gaming community. They host multiple servers, providing a welcoming environment for players with diverse interests.
+                The VoyagersGuild is a modded Minecraft community that is
+                expanding to become a general gaming community. They host
+                multiple servers, providing a welcoming environment for players
+                with diverse interests.
               </p>
               <br />
               <p>
-              The website was created to serve as a centralized file system for the community. Members can easily download specific server files, such as world saves or additional mods, streamlining the process of joining and enjoying the servers.
+                The website was created to serve as a centralized file system
+                for the community. Members can easily download specific server
+                files, such as world saves or additional mods, streamlining the
+                process of joining and enjoying the servers.
               </p>
               <br />
               <p>
-              By offering a user-friendly platform for file distribution and community updates, the VoyagersGuild website helps foster collaboration and engagement among its members as the community continues to grow.
+                By offering a user-friendly platform for file distribution and
+                community updates, the VoyagersGuild website helps foster
+                collaboration and engagement among its members as the community
+                continues to grow.
               </p>
               <br />
               <br />
               <br />
-              This project also made me learn Java and making Discord bots. All of which are different projects here.
+              This project also made me learn Java and making Discord bots. All
+              of which are different projects here.
             </CardContent>
           </Card>
         </section>
 
         {/* last snap section */}
-        <section className="flex flex-col items-center justify-center h-[94vh] snap-start">
-          <h2 className="text-3xl font-bold mb-4">More Coming Soon</h2>
-          <p className="text-lg text-center max-w-xl">
+        <section className="flex flex-col items-center justify-center min-h-screen lg:h-screen snap-start px-4 lg:px-16 lg:px-32 xl:px-96 py-8 lg:py-0">
+          <h2 className="text-2xl lg:text-3xl font-bold mb-4">
+            More Coming Soon
+          </h2>
+          <br />
+          <p className="text-base lg:text-lg text-center max-w-xl">
             Stay tuned for more updates and projects!
           </p>
         </section>
